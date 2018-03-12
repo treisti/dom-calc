@@ -1,0 +1,253 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Calculatrice</title>
+    <style media="screen" type="text/css">
+      #keyboard td {
+        border: 1px solid black;
+        width: 68px;
+		height: 68px;
+		overflow: hidden;
+      }
+      .num {
+        background-color: rgb(100, 200, 255);
+        text-align: center;
+      }
+      .num:hover {
+        background-color: rgb(100, 150, 255);
+      }
+      .ope {
+        background-color: rgb(100, 200, 100);
+        text-align: center;
+      }
+      .ope:hover {
+        background-color: rgb(100, 150, 100);
+      }
+      .res {
+        background-color: rgb(200, 200, 100);
+        text-align: center;
+      }
+      .res:hover {
+        background-color: rgb(200, 150, 100);
+      }
+      .del {
+        background-color: rgb(200, 100, 50);
+        text-align: center;
+      }
+      .del:hover {
+        background-color: rgb(200, 50, 50);
+      }
+	  .exp {
+        background-color: rgb(255, 150, 50);
+        text-align: center;
+      }
+      .exp:hover {
+        background-color: rgb(255, 100, 50);
+      }
+	  .tri {
+        background-color: rgb(100, 255, 200);
+        text-align: center;
+      }
+      .tri:hover {
+        background-color: rgb(100, 200, 200);
+      }
+      .scr {
+        background-color: rgb(255, 255, 255);
+        text-align: right;
+		padding: 10px;
+      }
+      #keyboard {
+        display: inline-block;
+        padding: 2px;
+        background-color: black;
+      }
+    </style>
+    <script>
+      var buffer;
+      var operation;
+      var newform;
+      function init() {
+        var scr = document.getElementById("screen");
+        scr.innerHTML="0";
+		var sci = document.getElementById("sci_check");
+		sci.checked = true;
+        buffer=0;
+        operation="+";
+        newform=false;
+      }
+      function number(n) {
+        var scr = document.getElementById("screen");
+        var val = Math.trunc(scr.innerHTML).toString();
+		if(newform) {
+          if(n!=".") {
+            newform = false;
+            scr.innerHTML=n;
+          }
+        } else {
+          if(((n=="." && (val)==(scr.innerHTML)) || (n!=".") || (scr.innerHTML=="0") || (scr.innerHTML=="-0")) && scr.innerHTML.length<24) {
+            if(scr.innerHTML=="0" || scr.innerHTML=="-0") {
+              if(n==".") {
+                scr.innerHTML += ".";
+              } else if(scr.innerHTML=="0") {
+                scr.innerHTML = n;
+              } else {
+			    scr.innerHTML = "-"+n;
+			  }
+            } else {
+              scr.innerHTML = scr.innerHTML+n;
+            }
+          }
+        }
+      }
+      function operate(key) {
+        var scr = document.getElementById("screen");
+        var value = parseFloat(scr.innerHTML);
+        if(operation=="+" && !newform) {
+          buffer += value;
+        }
+        if(operation=="-" && !newform) {
+          buffer -= value;
+        }
+        if(operation=="*" && !newform) {
+          buffer *= value;
+        }
+        if(operation=="/" && !newform) {
+          buffer /= value;
+        }
+		if(operation=="pow" && !newform) {
+          buffer = Math.pow(buffer, value);
+        }
+		if(operation=="e" && !newform) {
+          buffer *= Math.pow(10, value);
+        }
+		if(newform) {
+		  buffer = value;
+        }
+        operation = key;
+        scr.innerHTML = buffer;
+        if(operation=="") {
+          buffer = 0;
+          operation = "+";
+        }
+        newform = true;
+      }
+      function ce() {
+        var scr = document.getElementById("screen");
+        scr.innerHTML = "0";
+      }
+      function c() {
+        var scr = document.getElementById("screen");
+        scr.innerHTML = "0";
+        buffer = 0;
+        newform = false;
+        operation = "+";
+      }
+	  function calc(op) {
+	    var scr = document.getElementById("screen");
+		if(op=="pi") {
+          scr.innerHTML = Math.PI.toString();
+		}
+		if(op=="sin") {
+          scr.innerHTML = Math.sin(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="cos") {
+          scr.innerHTML = Math.cos(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="tan") {
+          scr.innerHTML = Math.tan(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="asin") {
+          scr.innerHTML = Math.asin(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="acos") {
+          scr.innerHTML = Math.acos(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="atan") {
+          scr.innerHTML = Math.atan(parseFloat(scr.innerHTML)).toString();
+		}
+		if(op=="sqr") {
+          scr.innerHTML = Math.pow(parseFloat(scr.innerHTML), 2).toString();
+		}
+		if(op=="sqrt") {
+          scr.innerHTML = Math.pow(parseFloat(scr.innerHTML), 0.5).toString();
+		}
+		if(op=="sgn") {
+          if(parseFloat(scr.innerHTML)>0) {
+		    scr.innerHTML = "-"+scr.innerHTML;
+		  } else if(scr.innerHTML=="0") {
+		    scr.innerHTML="-0";
+		  } else {
+		    scr.innerHTML = scr.innerHTML.substring(1, scr.innerHTML.length);
+		  }
+		}
+        newform = false;
+	  }
+	  function scientific(sci) {
+		var fct = document.getElementById("sci");
+	    if(sci) {
+		  fct.style.display = "block";
+		} else {
+		  fct.style.display = "none";
+		}
+	  }
+    </script>
+  </head>
+  <body onload="init();">
+	<input id="sci_check" type="checkbox" onclick="scientific(this.checked);">Mode scientifique</input><br/>
+    <div id="keyboard">
+      <table>
+        <tr>
+          <td class="scr" id="screen" colspan=3></td>
+          <td class="del" onclick="c()">C</td>
+        </tr>
+        <tr>
+          <td class="del" onclick="ce();">CE</td>
+          <td class="ope" onclick="operate('/');">/</td>
+          <td class="ope" onclick="operate('*');">*</td>
+          <td class="ope" onclick="operate('-');">-</td>
+        </tr>
+        <tr>
+          <td class="num" onclick="number('7');">7</td>
+          <td class="num" onclick="number('8');">8</td>
+          <td class="num" onclick="number('9');">9</td>
+          <td class="ope" rowspan=2 onclick="operate('+');">+</td>
+        </tr>
+        <tr>
+          <td class="num" onclick="number('4');">4</td>
+          <td class="num" onclick="number('5');">5</td>
+          <td class="num" onclick="number('6');">6</td>
+        </tr>
+        <tr>
+          <td class="num" onclick="number('1');">1</td>
+          <td class="num" onclick="number('2');">2</td>
+          <td class="num" onclick="number('3');">3</td>
+          <td class="res" rowspan=2 onclick="operate('');">=</td>
+        </tr>
+        <tr>
+          <td class="num" onclick="calc('sgn');">+/-</td>
+          <td class="num" onclick="number('0');">0</td>
+          <td class="num" onclick="number('.');">.</td>
+        </tr>
+      </table>
+	  <table id="sci">
+		<tr>
+          <td class="tri" onclick="calc('sin');">sin</td>
+          <td class="tri" onclick="calc('cos');">cos</td>
+          <td class="tri" onclick="calc('tan');">tan</td>
+          <td class="tri" rowspan=2 onclick="calc('pi');">π</td>
+        </tr>
+		<tr>
+          <td class="tri" onclick="calc('asin');">asin</td>
+          <td class="tri" onclick="calc('acos');">acos</td>
+          <td class="tri" onclick="calc('atan');">atan</td>
+        </tr>
+		<tr>
+          <td class="exp" onclick="calc('sqrt');">√</td>
+          <td class="exp" onclick="calc('sqr');">x²</td>
+          <td class="exp" onclick="operate('pow');">x^y</td>
+          <td class="exp" onclick="operate('e');">e</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
